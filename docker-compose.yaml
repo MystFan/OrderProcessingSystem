@@ -1,0 +1,64 @@
+version: "3.8"
+
+services: 
+  order-service:
+    container_name: order-service
+    image: mystfan/order-service:${VERSION}
+    build:
+      context: .
+      dockerfile: OrderService/OrderService.Api/Dockerfile
+    ports: 
+      - '8000:8080'
+    environment:
+      DATABASE__CONNECTIONSTRING: ${DATABASE_CONNECTIONSTRING}
+      RABBITMQ__USERNAME: ${RABBITMQ_USERNAME}
+      RABBITMQ__PASSWORD: ${RABBITMQ_PASSWORD}
+      RABBITMQ__HOST: ${RABBITMQ_HOST}
+    depends_on:
+      order-postgres:
+        condition: service_healthy
+
+  order-postgres:
+    container_name: postgres
+    image: postgres:17
+    environment:
+      POSTGRES_DB: OrderServiceDb
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - order-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d OrderServiceDb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+  order-service-migrations:
+    container_name: order-service-migrations
+    image: mystfan/order-service-migrations:${VERSION}
+    build:
+      context: .
+      dockerfile: OrderService/OrderService.Migrations/Dockerfile
+    environment:
+      DATABASE__CONNECTIONSTRING: ${DATABASE_CONNECTIONSTRING}
+    depends_on:
+      order-postgres:
+        condition: service_healthy
+
+volumes:
+  order-postgres-data:
+  rabbitmq-data:  

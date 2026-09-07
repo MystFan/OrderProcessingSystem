@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "OrderService.Migrations": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DATABASE__CONNECTIONSTRING": "Host=localhost;Port=5432;Database=OrderServiceDb;Username=postgres;Password=postgres"
+      }
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+<Solution>
+  <Folder Name="/BuildingBlocks/">
+    <Project Path="BuildingBlocks/BuildingBlocks.Application/BuildingBlocks.Application.csproj" Id="44d50c7f-bb2a-4c31-86bd-caf0109bee30" />
+    <Project Path="BuildingBlocks/BuildingBlocks.DataAccess/BuildingBlocks.DataAccess.csproj" Id="d0bbfe2b-1ec7-47c3-92e3-efcf47a76e08" />
+    <Project Path="BuildingBlocks/BuildingBlocks.Domain/BuildingBlocks.Domain.csproj" Id="83d8a0e7-e05e-445d-804a-d4a1ea51d4b7" />
+    <Project Path="BuildingBlocks/BuildingBlocks.Infrastructure/BuildingBlocks.Infrastructure.csproj" Id="2225f809-d481-4ae2-8d4c-afc890bccc46" />
+    <Project Path="BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj" />
+    <Project Path="BuildingBlocks/BuildingBlocks.Tests/BuildingBlocks.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Kubernetes/">
+    <File Path="Kubernetes/order-service-migrations.yml" />
+    <File Path="Kubernetes/order-service.yml" />
+    <File Path="Kubernetes/postgres.yml" />
+    <File Path="rabbitmq.yml" />
+  </Folder>
+  <Folder Name="/OrderService/">
+    <Project Path="OrderService/OrderService.Api/OrderService.Api.csproj" />
+    <Project Path="OrderService/OrderService.Application/OrderService.Application.csproj" Id="84f09439-df07-4cf1-ad44-d84987ebbd91" />
+    <Project Path="OrderService/OrderService.DataAccess/OrderService.DataAccess.csproj" Id="bc52ec36-2f8b-41b8-9d51-125ad5f73e14" />
+    <Project Path="OrderService/OrderService.Domain/OrderService.Domain.csproj" />
+    <Project Path="OrderService/OrderService.Migrations/OrderService.Migrations.csproj" />
+    <Project Path="OrderService/OrderService.Tests/OrderService.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="docker-compose.yaml" />
+  </Folder>
+</Solution>

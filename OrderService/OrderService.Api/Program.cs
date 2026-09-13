@@ -13,7 +13,12 @@ using OrderService.Api.Endpoints;
 using OrderService.Api.Infrastructure;
 using OrderService.Application;
 using OrderService.DataAccess;
+using OrderService.Domain.Exceptions;
+using Scalar.AspNetCore;
+using System.Reflection.Metadata;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
+using System.Xml.Linq;
 
 namespace OrderService.Api
 {
@@ -81,14 +86,32 @@ namespace OrderService.Api
             builder.Services.AddHostedService<OutboxPublisherHostedService>();
 
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(options =>
+            builder.Services.AddOpenApi("v1", options =>
             {
-                options.DocumentFilter<ExceptionReasonCodeDocumentFilter>();
-
-                options.SwaggerDoc("v1", new OpenApiInfo
+                options.AddDocumentTransformer((document, _, _) =>
                 {
-                    Version = "v1",
-                    Title = "OrderService.Api"
+                    document.Info = new OpenApiInfo
+                    {
+                        Title = "Order Service API",
+                        Version = "1.0",
+                        Description = "Order Service API",
+                    };
+
+                    if (!document.Components!.Schemas!.ContainsKey(nameof(ExceptionReasonCode)))
+                    {
+                        var enumSchema = new OpenApiSchema
+                        {
+                            Type = JsonSchemaType.String,
+                            Enum = Enum.GetNames(typeof(ExceptionReasonCode))
+                                .Select(name => JsonValue.Create(name))
+                                .Cast<JsonNode>()
+                                .ToList()
+                        };
+
+                        document.Components.Schemas.Add(nameof(ExceptionReasonCode), enumSchema);
+                    }
+
+                    return Task.CompletedTask;
                 });
             });
 
@@ -102,8 +125,8 @@ namespace OrderService.Api
 
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI(options => options.SwaggerEndpoint("v1/swagger.json", "Server API Schema v1"));
+                app.MapOpenApi("/openapi/v1.json");
+                app.MapScalarApiReference();
             }
 
             app.UseHealthChecks("/health/ping", new HealthCheckOptions
